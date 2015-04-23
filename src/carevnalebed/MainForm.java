@@ -10,248 +10,65 @@ import javax.swing.DefaultListModel;
  * @author s153335
  */
 public class MainForm extends javax.swing.JFrame {
+//
+//    static Connection _cn = null;
+//    static Boolean _connected = false;
+//    static String _user = "s153335";
+//    static String _pass = "eaq448";
+//    
 
-    static Connection _cn = null;
-    static Boolean _connected = false;
-    static String _user = "s153335";
-    static String _pass = "eaq448";
     
-    static boolean _logged = false;
-    
-    DefaultListModel _listModelNames = new DefaultListModel();
-    DefaultListModel _listModelNamesSearch = new DefaultListModel();
-    DefaultListModel _listModelWillings = new DefaultListModel();
-    
-    static List<String> _idS;
-    static List<String> _names;
-    static List<String> _descriptions;
-    
-    private ArrayList<Object> GetOrdersIds4UserId(int idUser) {
-        if(!_connected) return null;
-        
-        ArrayList<Object> tmp = new ArrayList<>();
-        try {
-                Statement st = _cn.createStatement();
-                ResultSet rs = st.executeQuery("SELECT * FROM CLORDERS");
-                while(rs.next()) {
-                    if(rs.getInt("id_user")==idUser) {
-                        tmp.add(rs.getInt("id_miracle"));
-                    }
-                }
-                return tmp;
-        }
-        catch(Exception ex) {
-                ex.printStackTrace();
-                return null;
-        }  
-    }
-    
-    private void DeleteByROWID(String rowId) {
-        if(!_connected) return;
-        try {
-                Statement st = _cn.createStatement();
-                ResultSet rs = st.executeQuery("DELETE FROM CLORDERS WHERE ROWID = '"+ rowId +"'");
-        }
-        catch(Exception ex) {
-                ex.printStackTrace();
-                return;
-        }  
-    }
-    
-    private String GetROWID4SelectedOrder() {
-        if(!_connected) return null;
-        int ordId = GetUserId(jTextFieldLogin.getText()) * 100 + GetMiracleIdByName((String)jListWillings.getSelectedValue());
-        try {
-                Statement st = _cn.createStatement();
-                ResultSet rs = st.executeQuery("SELECT ROWID FROM CLORDERS");
-                while(rs.next()) {               
-                    String tmpRowId = new String(rs.getRowId("ROWID").getBytes());
-                    Statement innerSt = _cn.createStatement();
-                    ResultSet innerRS = innerSt.executeQuery("SELECT * FROM CLORDERS WHERE ROWID = '"+ tmpRowId +"'");
-                        innerRS.next();
-                        if(ordId==innerRS.getInt("id")) return tmpRowId;
-                }
-                return null;
-        }
-        catch(Exception ex) {
-                ex.printStackTrace();
-                return null;
-        }  
-    }
-    
-    private String GetMiracleNameById(int id) {
-        if(!_connected) return null;        
-        try {
-                Statement st = _cn.createStatement();
-                ResultSet rs = st.executeQuery("SELECT * FROM CLMAIN");
-                while(rs.next()) {
-                    if(rs.getInt("id")==id) {
-                        return rs.getString("name");
-                    }
-                }
-                return null;
-        }
-        catch(Exception ex) {
-                ex.printStackTrace();
-                return null;
-        }  
-    }
-    
-    private int GetMiracleIdByName(String mirName) {
-        if(!_connected) return -1;        
-        try {
-                Statement st = _cn.createStatement();
-                ResultSet rs = st.executeQuery("SELECT * FROM CLMAIN");
-                while(rs.next()) {
-                    if(rs.getString("name").equals(mirName)) {
-                        return rs.getInt("id");
-                    }
-                }
-                return -1;
-        }
-        catch(Exception ex) {
-                ex.printStackTrace();
-                return -1;
-        } 
-    }
-    
-    private void SetMiracleId4UserId(int miracleId,int userId) {
-        if(!_connected) return;        
-        try {
-                Statement st = _cn.createStatement();
-                ResultSet rs = st.executeQuery("INSERT INTO \"S153335\".\"CLORDERS\" (\"id\", \"id_miracle\", \"id_user\") VALUES ('"+ (userId*100+miracleId) +"','"+ miracleId +"', '"+ userId +"')");
-        }
-        catch(Exception ex) {
-                ex.printStackTrace();
-        }
-    }
-    
-    private int GetUserId(String userName) {
-        if(!_connected) return -1;        
-        try {
-                Statement st = _cn.createStatement();
-                ResultSet rs = st.executeQuery("SELECT * FROM CLUSERS");
-                while(rs.next()) {
-                    if(rs.getString("name").equals(userName)) {
-                        return rs.getInt("id");
-                    }
-                }
-                return -1;
-        }
-        catch(Exception ex) {
-                ex.printStackTrace();
-                return -1;
-        }
-    }
 
-    private String GetPass4UserB64(String user) {
-        if(!_connected) return null;
-        String result = null;
-        
-        try {
-                Statement st = _cn.createStatement();
-                ResultSet rs = st.executeQuery("SELECT * FROM CLUSERS");
-                while(rs.next()) {
-                    if(rs.getString("name").equals(user)) {
-                        return rs.getString("secret");
-                    }
-                }
-                return null;
-        }
-        catch(Exception ex) {
-                ex.printStackTrace();
-                return null;
-        }
-    }
 
-    private void ReadData() {
-            if(!_connected) return;
-            
-            try {
-                Statement st = _cn.createStatement();
+//    private void ReadData() {
+//            if(!_connected) return;
+//            
+//            try {
+//                Statement st = _cn.createStatement();
+//
+//                ResultSet rs = st.executeQuery("SELECT * FROM CLMAIN");
+//                
+//
+//                
+//                while(rs.next()) {
+//                    _idS.add(rs.getString(1));
+//                    _names.add(rs.getString(2));
+//                    _descriptions.add(rs.getString(3));
+//                }
+//                
+//                //_listModelNames = n
+//                
+//                _listModelNames.clear();
+//                
+//                for( String s:_names ) {
+//                   _listModelNames.addElement(s); 
+//                  // System.out.println(s);
+//                }
+//                
+//                jListNames.setModel(_listModelNames);
+//                
+//            }
+//            catch(Exception ex) {
+//                ex.printStackTrace();
+//                return;
+//            }
+//    }
 
-                ResultSet rs = st.executeQuery("SELECT * FROM CLMAIN");
-                
-                _idS = new ArrayList<>();
-                _names = new ArrayList<>();
-                _descriptions = new ArrayList<>();
-                
-                while(rs.next()) {
-                    _idS.add(rs.getString(1));
-                    _names.add(rs.getString(2));
-                    _descriptions.add(rs.getString(3));
-                }
-                
-                //_listModelNames = n
-                
-                _listModelNames.clear();
-                
-                for( String s:_names ) {
-                   _listModelNames.addElement(s); 
-                  // System.out.println(s);
-                }
-                
-                jListNames.setModel(_listModelNames);
-                
-            }
-            catch(Exception ex) {
-                ex.printStackTrace();
-                return;
-            }
-    }
-    /**
-     * Инициализация соединения с бд
-     */
-    private void InitConnection(String user,String pass) {
-        
-        String url = "jdbc:oracle:thin:@localhost:1521:orbis";
-        
-        
-        try {     
-        _cn =
-            DriverManager.getConnection (url,user,pass);
-            _connected = true;
-        }
-        catch (Exception e) {
-            System.err.println(e.getMessage());
-            _connected = false;
-        }
-        
-    }
-    /**
-     * Закрытие соединения с бд
-     */
-    private void CloseConnection() {
-        try {
-            _cn.close();
-            _connected = false;
-        }
-        catch(Exception ex) {
-            ex.printStackTrace();
-        }
-    }
     
     public MainForm() {
         initComponents();
 
-        //register driver
-        try {
-            DriverManager.registerDriver (new oracle.jdbc.driver.OracleDriver());
-        }
-        catch (Exception e) {
-            System.err.println(e.getMessage());
-            return; 
-        }
+
         
-        InitConnection(_user, _pass);
+        //InitConnection(_user, _pass);
         
-        ReadData();
+        //ReadData();
         
-        if(!_connected) {
-                carevnalebed.Carevnalebed._exit();
-        }
+//        if(!_connected) {
+//                carevnalebed.Carevnalebed._exit();
+//        }
         
-        jListWillings.setModel(_listModelWillings);
+        //jListWillings.setModel(_listModelWillings);
         //ReadDataToTable(jTable1);
     }
 
@@ -439,76 +256,76 @@ public class MainForm extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        CloseConnection();
+        //CloseConnection();
     }//GEN-LAST:event_formWindowClosing
 
     private void jListNamesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jListNamesMouseClicked
         //System.out.println(jListNames.getSelectedIndex());
-        jLabelDescription.setText(_descriptions.get(jListNames.getSelectedIndex()));
+        //jLabelDescription.setText(_descriptions.get(jListNames.getSelectedIndex()));
     }//GEN-LAST:event_jListNamesMouseClicked
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
 //        jTextFieldLogin.setEnabled(false);
 //        jPasswordFieldPass.setEnabled(false);
-        if(_logged) {
-            _logged = false;
-            jTextFieldLogin.setEnabled(true);
-            jPasswordFieldPass.setEnabled(true);
-        }
-        else {
-            String userName = jTextFieldLogin.getText();
-            String userPass = new String(jPasswordFieldPass.getPassword());
-            String resTmp = GetPass4UserB64(userName);
-            if(resTmp!=null) {
-                if(resTmp.equals(Base64.encode(userPass))) {
-                    _logged = true;
-                    jTextFieldLogin.setEnabled(false);
-                    jPasswordFieldPass.setEnabled(false);
-                }
-                else {
-                    _logged = false;
-                    jTextFieldLogin.setEnabled(true);
-                    jPasswordFieldPass.setEnabled(true);
-                }
-            }
-
-        }
-        //очистить список
-        _listModelWillings.clear();
-        if(_logged) {
-            ArrayList<Object> willings = GetOrdersIds4UserId(GetUserId(jTextFieldLogin.getText()));
-            if(willings==null) return;
-            
-            for(Object tmp:willings) {
-                _listModelWillings.addElement( GetMiracleNameById((int)tmp) );
-            }
-        }
+//        if(_logged) {
+//            _logged = false;
+//            jTextFieldLogin.setEnabled(true);
+//            jPasswordFieldPass.setEnabled(true);
+//        }
+//        else {
+//            String userName = jTextFieldLogin.getText();
+//            String userPass = new String(jPasswordFieldPass.getPassword());
+//            String resTmp = GetPass4UserB64(userName);
+//            if(resTmp!=null) {
+//                if(resTmp.equals(Base64.Encode(userPass))) {
+//                    _logged = true;
+//                    jTextFieldLogin.setEnabled(false);
+//                    jPasswordFieldPass.setEnabled(false);
+//                }
+//                else {
+//                    _logged = false;
+//                    jTextFieldLogin.setEnabled(true);
+//                    jPasswordFieldPass.setEnabled(true);
+//                }
+//            }
+//
+//        }
+//        //очистить список
+//        _listModelWillings.clear();
+//        if(_logged) {
+//            ArrayList<Object> willings = GetOrdersIds4UserId(GetUserId(jTextFieldLogin.getText()));
+//            if(willings==null) return;
+//            
+//            for(Object tmp:willings) {
+//                _listModelWillings.addElement( GetMiracleNameById((int)tmp) );
+//            }
+//        }
         
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        if(jListNames.getSelectedValue()!=null) {
-                if(_listModelWillings.contains(jListNames.getSelectedValue())) {
-                    return;
-                }
-                else {
-                //добавить в базу для текущего пользователя
-                
-                int uid = GetUserId(jTextFieldLogin.getText());
-                if(uid==-1) return;
-                SetMiracleId4UserId( GetMiracleIdByName((String)jListNames.getSelectedValue()), GetUserId(jTextFieldLogin.getText()));
-                _listModelWillings.addElement(jListNames.getSelectedValue());
-                }
-        }
+//        if(jListNames.getSelectedValue()!=null) {
+//                if(_listModelWillings.contains(jListNames.getSelectedValue())) {
+//                    return;
+//                }
+//                else {
+//                //добавить в базу для текущего пользователя
+//                
+//                int uid = GetUserId(jTextFieldLogin.getText());
+//                if(uid==-1) return;
+//                SetMiracleId4UserId( GetMiracleIdByName((String)jListNames.getSelectedValue()), GetUserId(jTextFieldLogin.getText()));
+//                _listModelWillings.addElement(jListNames.getSelectedValue());
+//                }
+//        }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        if(jListWillings.getSelectedIndex()!=-1) {
-            if(_logged) {
-                DeleteByROWID(GetROWID4SelectedOrder()); 
-                _listModelWillings.removeElement(jListWillings.getSelectedValue());
-            }
-        }
+//        if(jListWillings.getSelectedIndex()!=-1) {
+//            if(_logged) {
+//                DeleteByROWID(GetROWID4SelectedOrder()); 
+//                _listModelWillings.removeElement(jListWillings.getSelectedValue());
+//            }
+//        }
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jTextFieldSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextFieldSearchActionPerformed
@@ -521,24 +338,24 @@ public class MainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextFieldSearchKeyPressed
 
     private void jTextFieldSearchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextFieldSearchKeyReleased
-        try {
-            if(jTextFieldSearch.getText().length()!=0) {
-                //_listModelNamesSearch = _listModelNames; 
-                _listModelNamesSearch.clear();
-                for(int i=0;i<_listModelNames.getSize();i++) {
-                    if(((String)_listModelNames.get(i)).contains(jTextFieldSearch.getText())) {
-                        _listModelNamesSearch.addElement(_listModelNames.get(i));
-                    }
-                }
-                jListNames.setModel(_listModelNamesSearch);
-            }
-            else {
-                jListNames.setModel(_listModelNames);
-            }
-        }
-        catch(Exception ex) {
-            jListNames.setModel(_listModelNames);
-        }        // TODO add your handling code here:
+//        try {
+//            if(jTextFieldSearch.getText().length()!=0) {
+//                //_listModelNamesSearch = _listModelNames; 
+//                _listModelNamesSearch.clear();
+//                for(int i=0;i<_listModelNames.getSize();i++) {
+//                    if(((String)_listModelNames.get(i)).contains(jTextFieldSearch.getText())) {
+//                        _listModelNamesSearch.addElement(_listModelNames.get(i));
+//                    }
+//                }
+//                jListNames.setModel(_listModelNamesSearch);
+//            }
+//            else {
+//                jListNames.setModel(_listModelNames);
+//            }
+//        }
+//        catch(Exception ex) {
+//            jListNames.setModel(_listModelNames);
+//        }        // TODO add your handling code here:
     }//GEN-LAST:event_jTextFieldSearchKeyReleased
 
     /**

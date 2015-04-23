@@ -12,9 +12,10 @@ public class Base64 {
         String outEnc = "";
         String outDec = "";
         
-        outEnc = encode(test);
-        outDec = decode(outEnc);
+        outEnc = Encode(test);
+        outDec = Decode(outEnc);
         
+        System.out.println("Base64.java testspace");
         System.out.println(String.format("[Base64::encode()] %s(%d) -> %s(%d)", test, test.length(), outEnc, outEnc.length()));
         System.out.println(String.format("[Base64::decode()] %s(%d) -> %s(%d)", outEnc, outEnc.length(), outDec, outDec.length()));
         if(test.hashCode() == outDec.hashCode()) {
@@ -26,7 +27,7 @@ public class Base64 {
         }
     }
     
-    public static String encode(String src) 
+    public static String Encode(String src) 
     {
         String tmp = null;
         try {
@@ -38,7 +39,7 @@ public class Base64 {
         return tmp;
     }
 
-    public static String decode(String src) 
+    public static String Decode(String src) 
     {
         String tmp = null;
         try {
