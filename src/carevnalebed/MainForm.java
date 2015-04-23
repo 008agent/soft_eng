@@ -1,20 +1,9 @@
 package carevnalebed;
 
-import com.sun.org.apache.xerces.internal.impl.xs.util.StringListImpl;
-import com.sun.org.apache.xerces.internal.xs.StringList;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
-import javax.swing.JList;
-import javax.swing.JTable;
-import javax.swing.ListModel;
-import oracle.jdbc.driver.*;
-import oracle.sql.DATE;
-import org.eclipse.persistence.jpa.jpql.parser.DateTime;
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 
 /**
  *
