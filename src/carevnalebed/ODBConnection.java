@@ -4,7 +4,6 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultListModel;
-import javax.swing.JTextField;
 
 public class ODBConnection 
 {
@@ -13,6 +12,11 @@ public class ODBConnection
     Boolean _connected = false;
     String _user = "";
     String _pass = "";
+    
+    String _loginDb = "";
+    String _passwordDb = "";
+    boolean _loggedDb = false;
+    int _roleDb = 0;
     
     boolean _logged = false;
     
@@ -23,7 +27,7 @@ public class ODBConnection
     List<String> _idS = new ArrayList<>();
     List<String> _names = new ArrayList<>();
     List<String> _descriptions = new ArrayList<>();
-
+    
 ///endVariables    
     public static void main(String[] args) {
         System.out.println("ODBConnection.java testspace");
@@ -31,7 +35,38 @@ public class ODBConnection
         ODBConnection odbc = new ODBConnection("s153335", "eaq448");
         
         System.out.println(String.format("Connected %b",odbc.IsConnected().toString()));
+        
+        odbc.Login("admin", "admin");
     }
+    
+    //залогиниться в систему.
+    public void Login(String login,String pass) {
+        _loginDb = login;
+        _passwordDb = pass;
+        
+        String tmpPassB64 = GetPass4UserB64(_loginDb);
+        
+        if(tmpPassB64.equals(Base64.Encode(_passwordDb))) {
+            System.out.println("user found");
+            _loggedDb = true;
+        }
+        
+        if(_loggedDb) {
+            _roleDb = GetRoleId4User(_loginDb);
+            System.out.println(_roleDb);
+        }
+    }
+    
+    public void Logout() {
+        _loginDb = _passwordDb = "";
+        _roleDb = 0;
+        _loggedDb = false;
+    }
+    
+    public int GetRoleId() {
+        return _roleDb;
+    }
+
     
     public Boolean IsConnected() {
         return _connected;
@@ -175,6 +210,23 @@ public class ODBConnection
         }
     }
     
+    public ArrayList<String> GetUsersList() {
+        ArrayList<String> al = new ArrayList<>();
+        al.clear();
+        if(!_connected) return al;        
+        try {
+                Statement st = _cn.createStatement();
+                ResultSet rs = st.executeQuery("SELECT * FROM CLUSERS");
+                while(rs.next()) {
+                    al.add(rs.getString("name"));
+                }
+        }
+        catch(Exception ex) {
+                ex.printStackTrace();
+        }
+        return al;
+    }
+    
     public int GetUserId(String userName) {
         if(!_connected) return -1;        
         try {
@@ -210,6 +262,26 @@ public class ODBConnection
         catch(Exception ex) {
                 ex.printStackTrace();
                 return null;
+        }
+    }
+    
+    public int GetRoleId4User(String user) {
+        if(!_connected) return 0;
+        int result = 0;
+        
+        try {
+                Statement st = _cn.createStatement();
+                ResultSet rs = st.executeQuery("SELECT * FROM CLUSERS");
+                while(rs.next()) {
+                    if(rs.getString("name").equals(user)) {
+                        return rs.getInt("idAccountRole");
+                    }
+                }
+                return 0;
+        }
+        catch(Exception ex) {
+                ex.printStackTrace();
+                return 0;
         }
     }
         

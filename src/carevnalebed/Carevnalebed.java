@@ -13,7 +13,7 @@ public class Carevnalebed implements Runnable{
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        SwingUtilities.invokeLater(new Carevnalebed());
+        SwingUtilities.invokeLater(/*new Carevnalebed()*/ new LoginForm());
     }
 
     public static void _exit() {
