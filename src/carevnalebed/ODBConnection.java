@@ -43,8 +43,9 @@ public class ODBConnection
         odbc.ExecuteQuery("select * from \"S153335\".\"CLUSERS\" where \"id\"=3");
     }
     
+
     //залогиниться в систему.
-    public void Login(String login,String pass) {
+    public boolean Login(String login,String pass) {
         _loginDb = login;
         _passwordDb = pass;
         
@@ -54,11 +55,17 @@ public class ODBConnection
             System.out.println("user found");
             _loggedDb = true;
         }
+        else {
+            _loggedDb = false;
+            return false;
+        }
         
         if(_loggedDb) {
             _roleDb = GetRoleId4User(_loginDb);
             System.out.println(_roleDb);
+            return true;
         }
+        return false;
     }
     
     public void Logout() {
@@ -144,6 +151,22 @@ public class ODBConnection
                 ex.printStackTrace();
                 return;
         }  
+    }
+    
+    public int GetRoleIdByAlias(String name) {
+        if(!_connected) return 0;
+        try {
+                Statement st = _cn.createStatement();
+                ResultSet rs = st.executeQuery("SELECT * FROM \"S153335\".\"CLROLES\" WHERE \"alias\"='"+ name +"'");
+                while(rs.next()) {
+                    return rs.getInt("id");
+                }
+        }
+        catch(Exception ex) {
+                ex.printStackTrace();
+                return 0;
+        }  
+        return 0;
     }
     
     public String GetROWID4SelectedUser(String user) {

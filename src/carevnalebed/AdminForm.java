@@ -23,12 +23,21 @@ public class AdminForm extends javax.swing.JFrame implements Runnable{
      * Creates new form AdminForm
      */
     public AdminForm() {
-        initComponents();
-        this.setTitle("Панель администратора");
-        this.jList1.setModel(dl);
-        
-        for(String s:Globals.odbcConn.GetUsersList()) {
-            dl.addElement(s);
+        try {
+            initComponents();
+            this.setTitle("Панель администратора");
+            this.jList1.setModel(dl);
+            
+            for(String s:Globals.odbcConn.GetUsersList()) {
+                dl.addElement(s);
+            }
+            
+            ResultSet rsList = Globals.odbcConn.ExecuteQuery("SELECT * FROM \"S153335\".\"CLROLES\"");
+            while(rsList.next()) {
+                jComboBoxRole.addItem(rsList.getString("alias"));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(AdminForm.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -53,6 +62,15 @@ public class AdminForm extends javax.swing.JFrame implements Runnable{
         JTextPasswordB64 = new javax.swing.JTextField();
         jDeleteUser = new javax.swing.JButton();
         jLabelMessage = new javax.swing.JLabel();
+        jLogout = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        jTextNewName = new javax.swing.JTextField();
+        jTextNewPassword = new javax.swing.JTextField();
+        jComboBoxRole = new javax.swing.JComboBox();
+        jButtonAdd = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setType(java.awt.Window.Type.UTILITY);
@@ -94,6 +112,28 @@ public class AdminForm extends javax.swing.JFrame implements Runnable{
             }
         });
 
+        jLogout.setText("Выйти");
+        jLogout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jLogoutActionPerformed(evt);
+            }
+        });
+
+        jLabel4.setText("Добавить нового пользователя");
+
+        jLabel7.setText("Роль:");
+
+        jLabel8.setText("Пароль:");
+
+        jLabel9.setText("Имя:");
+
+        jButtonAdd.setText("Добавить");
+        jButtonAdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonAddActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -103,28 +143,56 @@ public class AdminForm extends javax.swing.JFrame implements Runnable{
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel3)
-                                .addGap(41, 41, 41)
-                                .addComponent(jTextRole, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel5)
-                                .addGap(28, 28, 28)
-                                .addComponent(jTextPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel6)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(JTextPasswordB64, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jDeleteUser, javax.swing.GroupLayout.DEFAULT_SIZE, 502, Short.MAX_VALUE)
-                            .addComponent(jLabelMessage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                .addComponent(jDeleteUser, javax.swing.GroupLayout.DEFAULT_SIZE, 502, Short.MAX_VALUE)
+                                                .addComponent(jLabelMessage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                                        .addComponent(jLabel6)
+                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                        .addComponent(JTextPasswordB64))
+                                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                                        .addComponent(jLabel5)
+                                                        .addGap(28, 28, 28)
+                                                        .addComponent(jTextPassword))
+                                                    .addGroup(layout.createSequentialGroup()
+                                                        .addComponent(jLabel3)
+                                                        .addGap(41, 41, 41)
+                                                        .addComponent(jTextRole, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(18, 18, 18)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                    .addComponent(jLabel9)
+                                                    .addComponent(jLabel7))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                    .addComponent(jTextNewName, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                    .addComponent(jComboBoxRole, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                            .addGroup(layout.createSequentialGroup()
+                                                .addComponent(jLabel8)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(jTextNewPassword, javax.swing.GroupLayout.PREFERRED_SIZE, 220, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButtonAdd, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(42, 42, 42)
                         .addComponent(jLabel1)
                         .addGap(69, 69, 69)
-                        .addComponent(jLabel2)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLogout)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -132,8 +200,9 @@ public class AdminForm extends javax.swing.JFrame implements Runnable{
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jLabel2))
-                .addGap(14, 14, 14)
+                    .addComponent(jLabel2)
+                    .addComponent(jLogout))
+                .addGap(9, 9, 9)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
@@ -150,7 +219,23 @@ public class AdminForm extends javax.swing.JFrame implements Runnable{
                             .addComponent(JTextPasswordB64, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addComponent(jDeleteUser)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 297, Short.MAX_VALUE)
+                        .addGap(51, 51, 51)
+                        .addComponent(jLabel4)
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel9)
+                            .addComponent(jTextNewName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(32, 32, 32)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel7)
+                            .addComponent(jComboBoxRole, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(31, 31, 31)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel8)
+                            .addComponent(jTextNewPassword, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addComponent(jButtonAdd)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 46, Short.MAX_VALUE)
                         .addComponent(jLabelMessage, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
@@ -192,6 +277,47 @@ public class AdminForm extends javax.swing.JFrame implements Runnable{
         }
     }//GEN-LAST:event_jDeleteUserActionPerformed
 
+    private void jLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jLogoutActionPerformed
+        Globals.odbcConn.Logout();
+        this.setVisible(false);
+        Globals.MainFormLogin.setVisible(true);
+    }//GEN-LAST:event_jLogoutActionPerformed
+
+    private void jButtonAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddActionPerformed
+        jLabelMessage.setText("");
+        if("Администратор".equals((String)jComboBoxRole.getSelectedItem())) {
+            jLabelMessage.setText("Администратор может быть только один");
+            return;
+        }
+        
+        if(jTextNewName.getText().length()==0) {
+            jLabelMessage.setText("Невозможно создать пользователя без имени");
+            return;
+        }
+        
+        if(jTextNewPassword.getText().length()==0) {
+            jLabelMessage.setText("Невозможно создать пользователя без пароля");
+            return;
+        }
+        
+        String _usr_ = jTextNewName.getText();
+        String _psw_ = jTextNewPassword.getText();
+        int _roleId_ = Globals.odbcConn.GetRoleIdByAlias((String)jComboBoxRole.getSelectedItem());
+        
+        for(Object o:dl.toArray()) {
+            String tmp = (String)o;
+            if(tmp.equals(_usr_)) {
+                jLabelMessage.setText("Пользователь с таким именем сущестует");
+                return;
+            }
+        }
+        
+        Globals.odbcConn.ExecuteQuery("INSERT INTO \"S153335\".\"CLUSERS\" (\"name\", \"secret\", \"idAccountRole\") VALUES ('"+_usr_+"', '"+Base64.Encode(_psw_)+"', '"+_roleId_+"')");
+        dl.addElement(_usr_);
+        jLabelMessage.setText("Пользователь "+ _usr_ +" добавлен");
+        //INSERT INTO "S153335"."CLUSERS" ("name", "secret", "idAccountRole") VALUES ('user', 'gsd;hgd;h', '2')
+    }//GEN-LAST:event_jButtonAddActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -229,15 +355,24 @@ public class AdminForm extends javax.swing.JFrame implements Runnable{
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField JTextPasswordB64;
+    private javax.swing.JButton jButtonAdd;
+    private javax.swing.JComboBox jComboBoxRole;
     private javax.swing.JButton jDeleteUser;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JLabel jLabelMessage;
     private javax.swing.JList jList1;
+    private javax.swing.JButton jLogout;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextField jTextNewName;
+    private javax.swing.JTextField jTextNewPassword;
     private javax.swing.JTextField jTextPassword;
     private javax.swing.JTextField jTextRole;
     // End of variables declaration//GEN-END:variables

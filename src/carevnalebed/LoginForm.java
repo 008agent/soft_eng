@@ -72,7 +72,10 @@ public class LoginForm extends javax.swing.JFrame implements Runnable{
 
     private void jButtonLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLoginActionPerformed
         Globals.odbcConn = new ODBConnection("s153335", "eaq448");
-        Globals.odbcConn.Login(jLogin.getText(), new String(jPassword.getPassword()));
+        if(!Globals.odbcConn.Login(jLogin.getText(), new String(jPassword.getPassword()))) {
+            System.err.println("Ошибка авторизации");
+            return;
+        }
         switch(Globals.odbcConn.GetRoleId()) {
             case 0 : {
                 //0 - ошибка авторизации
