@@ -5,6 +5,10 @@
  */
 package carevnalebed;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 
 /**
@@ -14,6 +18,7 @@ import javax.swing.DefaultListModel;
 public class AdminForm extends javax.swing.JFrame implements Runnable{
 
     DefaultListModel<String> dl = new DefaultListModel<>();
+    int _currentSelectedRole = 0;
     /**
      * Creates new form AdminForm
      */
@@ -46,6 +51,8 @@ public class AdminForm extends javax.swing.JFrame implements Runnable{
         jTextPassword = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         JTextPasswordB64 = new javax.swing.JTextField();
+        jDeleteUser = new javax.swing.JButton();
+        jLabelMessage = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setType(java.awt.Window.Type.UTILITY);
@@ -80,6 +87,13 @@ public class AdminForm extends javax.swing.JFrame implements Runnable{
 
         JTextPasswordB64.setEnabled(false);
 
+        jDeleteUser.setText("Удалить");
+        jDeleteUser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jDeleteUserActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -90,7 +104,7 @@ public class AdminForm extends javax.swing.JFrame implements Runnable{
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel3)
                                 .addGap(41, 41, 41)
@@ -102,13 +116,15 @@ public class AdminForm extends javax.swing.JFrame implements Runnable{
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel6)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(JTextPasswordB64, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(JTextPasswordB64, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jDeleteUser, javax.swing.GroupLayout.DEFAULT_SIZE, 502, Short.MAX_VALUE)
+                            .addComponent(jLabelMessage, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(42, 42, 42)
                         .addComponent(jLabel1)
                         .addGap(69, 69, 69)
                         .addComponent(jLabel2)))
-                .addContainerGap(313, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -119,7 +135,7 @@ public class AdminForm extends javax.swing.JFrame implements Runnable{
                     .addComponent(jLabel2))
                 .addGap(14, 14, 14)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel3)
@@ -132,7 +148,10 @@ public class AdminForm extends javax.swing.JFrame implements Runnable{
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel6)
                             .addComponent(JTextPasswordB64, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(18, 18, 18)
+                        .addComponent(jDeleteUser)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 297, Short.MAX_VALUE)
+                        .addComponent(jLabelMessage, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
 
@@ -144,12 +163,34 @@ public class AdminForm extends javax.swing.JFrame implements Runnable{
     }//GEN-LAST:event_formWindowDeactivated
 
     private void jList1ValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_jList1ValueChanged
-        //setTitle(String.valueOf(jList1.getSelectedIndex()));
-        jTextRole.setText(String.valueOf(Globals.odbcConn.GetRoleId4User((String)jList1.getSelectedValue())));
-        JTextPasswordB64.setText(Globals.odbcConn.GetPass4UserB64((String)jList1.getSelectedValue()));
-        jTextPassword.setText(Base64.Decode(JTextPasswordB64.getText()));
+        try {
+            _currentSelectedRole = Globals.odbcConn.GetRoleId4User((String)jList1.getSelectedValue());
+            ResultSet rs = Globals.odbcConn.ExecuteQuery("SELECT * FROM \"S153335\".\"CLROLES\" WHERE \"id\"=" + _currentSelectedRole);
+            while(rs.next()) {
+                jTextRole.setText(rs.getString("alias"));
+            }
+            JTextPasswordB64.setText(Globals.odbcConn.GetPass4UserB64((String)jList1.getSelectedValue()));
+            jTextPassword.setText(Base64.Decode(JTextPasswordB64.getText()));
+        } catch (SQLException ex) {
+            Logger.getLogger(AdminForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
     }//GEN-LAST:event_jList1ValueChanged
+
+    private void jDeleteUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jDeleteUserActionPerformed
+        // TODO add your handling code here:
+        //Globals.odbcConn.ExecuteQuery("DELETE FROM CLUSERS WHERE name="+(String)jList1.getSelectedValue());
+        jLabelMessage.setText("");
+        if(_currentSelectedRole!=1) {
+            ResultSet rs = Globals.odbcConn.ExecuteQuery("DELETE FROM \"S153335\".\"CLUSERS\" WHERE \"name\"=\'"+(String)jList1.getSelectedValue() + '\'');
+            //Globals.odbcConn.DeleteUserByRowId(Globals.odbcConn.GetROWID4SelectedUser((String)jList1.getSelectedValue()));
+            jLabelMessage.setText("Удален пользователь " + (String)jList1.getSelectedValue());
+            this.dl.removeElement((String)jList1.getSelectedValue());
+        }
+        else {
+            jLabelMessage.setText("Невозможно удалить учетную запись администратора");
+        }
+    }//GEN-LAST:event_jDeleteUserActionPerformed
 
     /**
      * @param args the command line arguments
@@ -188,11 +229,13 @@ public class AdminForm extends javax.swing.JFrame implements Runnable{
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField JTextPasswordB64;
+    private javax.swing.JButton jDeleteUser;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabelMessage;
     private javax.swing.JList jList1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTextPassword;

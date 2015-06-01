@@ -37,6 +37,10 @@ public class ODBConnection
         System.out.println(String.format("Connected %b",odbc.IsConnected().toString()));
         
         odbc.Login("admin", "admin");
+        
+        Globals.Verbose = true;
+        
+        odbc.ExecuteQuery("select * from \"S153335\".\"CLUSERS\" where \"id\"=3");
     }
     
     //залогиниться в систему.
@@ -142,6 +146,39 @@ public class ODBConnection
         }  
     }
     
+    public String GetROWID4SelectedUser(String user) {
+        if(!_connected) return null;
+        try {
+            Statement st = _cn.createStatement();
+            ResultSet rs = st.executeQuery("SELECT ROWID FROM CLUSERS");
+            while(rs.next()) {
+                String tmp = new String(rs.getRowId("ROWID").getBytes());
+                Statement innerSt = _cn.createStatement();
+                ResultSet innerRs = innerSt.executeQuery("SELECT * FROM CLUSERS WHERE ROWID = '" + tmp + "'");
+                innerRs.next();
+                if(user.equals(innerRs.getString("name"))) {
+                    return tmp;
+                }
+            }
+        }
+        catch(Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+        return null;
+    }
+    
+    public void DeleteUserByRowId(String RowId) {
+        if(!_connected) return;
+        try {
+                Statement innerSt = _cn.createStatement();
+                innerSt.executeQuery("DELETE FROM CLUSERS WHERE ROWID = '" + RowId + "'");
+        }            
+        catch(Exception ex) {
+                ex.printStackTrace();
+        }
+    }
+    
 //    public String GetROWID4SelectedOrder(JTextField textFieldLogin) {
 //        if(!_connected) return null;
 //        int ordId = GetUserId(jTextFieldLogin.getText()) * 100 + GetMiracleIdByName((String)jListWillings.getSelectedValue());
@@ -208,6 +245,19 @@ public class ODBConnection
         catch(Exception ex) {
                 ex.printStackTrace();
         }
+    }
+    
+    public ResultSet ExecuteQuery(String query) {
+        if(!_connected) return null;        
+        ResultSet rs = null;
+        try {
+                Statement st = _cn.createStatement();
+                rs = st.executeQuery(query);
+        }
+        catch(Exception ex) {
+                ex.printStackTrace();
+        }
+        return rs;
     }
     
     public ArrayList<String> GetUsersList() {
