@@ -87,6 +87,12 @@ public class LoginForm extends javax.swing.JFrame implements Runnable{
                 new AdminForm().setVisible(true);
                 return;
             }
+            case 2 : {
+                //2 - аналитик
+                Globals.MainFormLogin.setVisible(false);
+                new AnalyticsForm().setVisible(true);
+                return;
+            }      
             case 3 : {
                 //сборщик
                 Globals.MainFormLogin.setVisible(false);
