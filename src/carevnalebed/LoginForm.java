@@ -73,18 +73,25 @@ public class LoginForm extends javax.swing.JFrame implements Runnable{
     private void jButtonLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLoginActionPerformed
         Globals.odbcConn = new ODBConnection("s153335", "eaq448");
         if(!Globals.odbcConn.Login(jLogin.getText(), new String(jPassword.getPassword()))) {
-            System.err.println("Ошибка авторизации");
-            return;
         }
         switch(Globals.odbcConn.GetRoleId()) {
+            //не авторизован
             case 0 : {
                 //0 - ошибка авторизации
                 System.err.println("Autentication error");
+                return;
             }
             case 1 : {
                 //1 - администратор. Отобразить окно администратора
                 Globals.MainFormLogin.setVisible(false);
                 new AdminForm().setVisible(true);
+                return;
+            }
+            case 3 : {
+                //сборщик
+                Globals.MainFormLogin.setVisible(false);
+                new AssemblerForm().setVisible(true);
+                return;
             }
         }
     }//GEN-LAST:event_jButtonLoginActionPerformed
