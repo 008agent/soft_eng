@@ -227,7 +227,7 @@ public class ODBConnection
         if(!_connected) return null;        
         try {
                 Statement st = _cn.createStatement();
-                ResultSet rs = st.executeQuery("SELECT * FROM CLMAIN");
+                ResultSet rs = st.executeQuery("SELECT * FROM CLMIRACLES");
                 while(rs.next()) {
                     if(rs.getInt("id")==id) {
                         return rs.getString("name");
@@ -245,7 +245,7 @@ public class ODBConnection
         if(!_connected) return -1;        
         try {
                 Statement st = _cn.createStatement();
-                ResultSet rs = st.executeQuery("SELECT * FROM CLMAIN");
+                ResultSet rs = st.executeQuery("SELECT * FROM CLMIRACLES");
                 while(rs.next()) {
                     if(rs.getString("name").equals(mirName)) {
                         return rs.getInt("id");

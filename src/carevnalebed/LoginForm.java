@@ -99,6 +99,12 @@ public class LoginForm extends javax.swing.JFrame implements Runnable{
                 new AssemblerForm().setVisible(true);
                 return;
             }
+            case 5 : {
+                //пользователь
+                Globals.MainFormLogin.setVisible(false);
+                new UserForm(Globals.odbcConn.GetUserId(jLogin.getText())).setVisible(true);
+                return;
+            }
         }
     }//GEN-LAST:event_jButtonLoginActionPerformed
 
