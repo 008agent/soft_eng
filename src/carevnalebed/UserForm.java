@@ -15,7 +15,7 @@ import javax.swing.DefaultListModel;
  *
  * @author s153335
  */
-public class UserForm extends javax.swing.JFrame {
+public final class UserForm extends javax.swing.JFrame {
 
     /**
      * Creates new form UserForm
@@ -24,9 +24,25 @@ public class UserForm extends javax.swing.JFrame {
     DefaultListModel<String> dlMiracles = null;
     DefaultListModel<String> dlWishes   = null;
     
+    void ReloadTables() {
+        try {
+            dlMiracles.clear();
+            dlWishes.clear();
+            
+            ResultSet rsMir = Globals.odbcConn.ExecuteQuery("SELECT * FROM \"S153335\".\"CLMIRACLES\"");
+            while(rsMir.next()) {
+                dlMiracles.addElement(rsMir.getString("name"));
+            }
+            ResultSet rsWishes = Globals.odbcConn.ExecuteQuery("SELECT * FROM \"S153335\".\"CLORDERS\" WHERE \"id_user\"='" +userId+ "'");
+            while(rsWishes.next()) {
+                dlWishes.addElement( Globals.odbcConn.GetMiracleNameById(rsWishes.getInt("id_miracle")) );
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(UserForm.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     
     public UserForm(int uid) {
-        try {
             initComponents();
             this.setTitle("Личный кабинет пользователя");
             userId = uid;
@@ -37,18 +53,8 @@ public class UserForm extends javax.swing.JFrame {
             jListMiracles.setModel(dlMiracles);
             jListWishes.setModel(dlWishes);
             
-            ResultSet rsMir = Globals.odbcConn.ExecuteQuery("SELECT * FROM \"S153335\".\"CLMIRACLES\"");
-            while(rsMir.next()) {
-                dlMiracles.addElement(rsMir.getString("name"));
-            }
-            ResultSet rsWishes = Globals.odbcConn.ExecuteQuery("SELECT * FROM \"S153335\".\"CLORDERS\" WHERE \"id_user\"='" +userId+ "'");
-            while(rsWishes.next()) {
-                dlWishes.addElement( Globals.odbcConn.GetMiracleNameById(rsWishes.getInt("id_miracle")) );
-            }
+            ReloadTables();
             
-        } catch (SQLException ex) {
-            Logger.getLogger(UserForm.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
 
     /**
@@ -170,11 +176,13 @@ public class UserForm extends javax.swing.JFrame {
             }
                 Globals.odbcConn.ExecuteQuery("INSERT INTO \"S153335\".\"CLORDERS\" (\"id_miracle\", \"id_user\") VALUES ('"+Globals.odbcConn.GetMiracleIdByName(item)+"', '"+userId+"')");
                 dlWishes.addElement(item);
+        ReloadTables();
     }//GEN-LAST:event_jBUttonWantActionPerformed
 
     private void jButtonDontWantActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDontWantActionPerformed
         Globals.odbcConn.ExecuteQuery("DELETE FROM \"S153335\".\"CLORDERS\" WHERE \"id_miracle\"='"+ Globals.odbcConn.GetMiracleIdByName((String)jListWishes.getSelectedValue()) +"'");
         dlWishes.removeElement(jListWishes.getSelectedValue());
+        ReloadTables();
     }//GEN-LAST:event_jButtonDontWantActionPerformed
 
     /**

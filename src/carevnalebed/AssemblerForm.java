@@ -21,13 +21,9 @@ public class AssemblerForm extends javax.swing.JFrame implements Runnable{
      */
     DefaultListModel<String> dlPseudomiracles = null;
     
-    public AssemblerForm() {
+    void ReloadTables() {
         try {
-            initComponents();
-            this.setTitle("Меню корабельщика(сборщика)");
-            dlPseudomiracles = new DefaultListModel<>();
             dlPseudomiracles.clear();
-            jListMiracles.setModel(dlPseudomiracles);
             
             ResultSet rsMircs = Globals.odbcConn.ExecuteQuery("SELECT * FROM CLPSEUDOMIRACLES");
             while(rsMircs.next()) {
@@ -36,6 +32,16 @@ public class AssemblerForm extends javax.swing.JFrame implements Runnable{
         } catch (SQLException ex) {
             Logger.getLogger(AssemblerForm.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public AssemblerForm() {
+            initComponents();
+            this.setTitle("Меню корабельщика(сборщика)");
+            dlPseudomiracles = new DefaultListModel<>();
+            dlPseudomiracles.clear();
+            jListMiracles.setModel(dlPseudomiracles);
+            
+            ReloadTables();
         
     }
 
@@ -197,6 +203,8 @@ public class AssemblerForm extends javax.swing.JFrame implements Runnable{
         } catch (SQLException ex) {
             Logger.getLogger(AssemblerForm.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        ReloadTables();
     }//GEN-LAST:event_jButtonRegisterActionPerformed
 
     private void jExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jExitActionPerformed

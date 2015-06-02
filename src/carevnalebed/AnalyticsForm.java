@@ -15,7 +15,7 @@ import javax.swing.DefaultListModel;
  *
  * @author s153335
  */
-public class AnalyticsForm extends javax.swing.JFrame {
+public final class AnalyticsForm extends javax.swing.JFrame {
 
     /**
      * Creates new form AnalyticsForm
@@ -24,19 +24,11 @@ public class AnalyticsForm extends javax.swing.JFrame {
     DefaultListModel<String> dlPseudo   = null;
     DefaultListModel<String> dlTrash    = null;
     
-    public AnalyticsForm() {
+    void ReloadTables() {
+        dlMiracles.clear();
+        dlPseudo.clear();
+        dlTrash.clear();
         try {
-            initComponents();
-            this.setTitle("Меню аналитика");
-            
-            dlMiracles = new DefaultListModel<>();
-            dlPseudo = new DefaultListModel<>();
-            dlTrash = new DefaultListModel<>();
-            
-            jListMiracles.setModel(dlMiracles);
-            jListPseudo.setModel(dlPseudo);
-            jListTrash.setModel(dlTrash);
-            
             ResultSet rsMiracles = Globals.odbcConn.ExecuteQuery("SELECT * FROM CLMIRACLES");
             while(rsMiracles.next()) {
                 dlMiracles.addElement(rsMiracles.getString("name"));
@@ -48,10 +40,25 @@ public class AnalyticsForm extends javax.swing.JFrame {
             ResultSet rsTrash = Globals.odbcConn.ExecuteQuery("SELECT * FROM CLTRASH");
             while(rsTrash.next()) {
                 dlTrash.addElement(rsTrash.getString("name"));
-            }
+            }   
         } catch (SQLException ex) {
             Logger.getLogger(AnalyticsForm.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public AnalyticsForm() {
+            initComponents();
+            this.setTitle("Меню аналитика");
+            
+            dlMiracles = new DefaultListModel<>();
+            dlPseudo = new DefaultListModel<>();
+            dlTrash = new DefaultListModel<>();
+            
+            jListMiracles.setModel(dlMiracles);
+            jListPseudo.setModel(dlPseudo);
+            jListTrash.setModel(dlTrash);
+            
+            ReloadTables();
     }
 
     /**
@@ -279,6 +286,7 @@ public class AnalyticsForm extends javax.swing.JFrame {
                 dlPseudo.removeElement(name);
                 dlMiracles.addElement(name);
                 
+                ReloadTables();
                 //INSERT INTO "S153335"."CLMIRACLES" ("name", "description") VALUES ('gg', 'hhh') RETURNING ROWID INTO :NAV_ROWID
             }
         } catch (SQLException ex) {
@@ -296,6 +304,8 @@ public class AnalyticsForm extends javax.swing.JFrame {
                 ResultSet rsDst = Globals.odbcConn.ExecuteQuery("INSERT INTO \"S153335\".\"CLTRASH\" (\"name\", \"description\") VALUES ('"+name+"', '"+desc+"')");
                 dlPseudo.removeElement(name);
                 dlTrash.addElement(name);
+                
+                ReloadTables();
                 
                 //INSERT INTO "S153335"."CLMIRACLES" ("name", "description") VALUES ('gg', 'hhh') RETURNING ROWID INTO :NAV_ROWID
             }
@@ -315,6 +325,7 @@ public class AnalyticsForm extends javax.swing.JFrame {
                 dlMiracles.removeElement(name);
                 dlTrash.addElement(name);
                 
+                ReloadTables();
                 //INSERT INTO "S153335"."CLMIRACLES" ("name", "description") VALUES ('gg', 'hhh') RETURNING ROWID INTO :NAV_ROWID
             }
         } catch (SQLException ex) {
@@ -333,6 +344,7 @@ public class AnalyticsForm extends javax.swing.JFrame {
                 dlTrash.removeElement(name);
                 dlMiracles.addElement(name);
                 //INSERT INTO "S153335"."CLMIRACLES" ("name", "description") VALUES ('gg', 'hhh') RETURNING ROWID INTO :NAV_ROWID
+                ReloadTables();
             }
         } catch (SQLException ex) {
             Logger.getLogger(AnalyticsForm.class.getName()).log(Level.SEVERE, null, ex);

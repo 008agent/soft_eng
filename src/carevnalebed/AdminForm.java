@@ -15,18 +15,17 @@ import javax.swing.DefaultListModel;
  *
  * @author s153335
  */
-public class AdminForm extends javax.swing.JFrame implements Runnable{
+public final class AdminForm extends javax.swing.JFrame implements Runnable{
 
     DefaultListModel<String> dl = new DefaultListModel<>();
     int _currentSelectedRole = 0;
     /**
      * Creates new form AdminForm
      */
-    public AdminForm() {
+    
+    void ReloadTables() {
         try {
-            initComponents();
-            this.setTitle("Панель администратора");
-            this.jList1.setModel(dl);
+            dl.clear();
             
             for(String s:Globals.odbcConn.GetUsersList()) {
                 dl.addElement(s);
@@ -39,6 +38,14 @@ public class AdminForm extends javax.swing.JFrame implements Runnable{
         } catch (SQLException ex) {
             Logger.getLogger(AdminForm.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+    
+    public AdminForm() {
+            initComponents();
+            this.setTitle("Панель администратора");
+            this.jList1.setModel(dl);
+            
+            ReloadTables();
     }
 
     /**
@@ -275,6 +282,8 @@ public class AdminForm extends javax.swing.JFrame implements Runnable{
         else {
             jLabelMessage.setText("Невозможно удалить учетную запись администратора");
         }
+        
+        ReloadTables();
     }//GEN-LAST:event_jDeleteUserActionPerformed
 
     private void jLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jLogoutActionPerformed
@@ -316,6 +325,7 @@ public class AdminForm extends javax.swing.JFrame implements Runnable{
         dl.addElement(_usr_);
         jLabelMessage.setText("Пользователь "+ _usr_ +" добавлен");
         //INSERT INTO "S153335"."CLUSERS" ("name", "secret", "idAccountRole") VALUES ('user', 'gsd;hgd;h', '2')
+        ReloadTables();
     }//GEN-LAST:event_jButtonAddActionPerformed
 
     /**
