@@ -77,7 +77,12 @@ public final class UserForm extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jButtonExit = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt) {
+                formWindowClosed(evt);
+            }
+        });
 
         jLabel1.setText("Каталог чудес:");
 
@@ -184,6 +189,12 @@ public final class UserForm extends javax.swing.JFrame {
         dlWishes.removeElement(jListWishes.getSelectedValue());
         ReloadTables();
     }//GEN-LAST:event_jButtonDontWantActionPerformed
+
+    private void formWindowClosed(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosed
+        Globals.odbcConn.Logout();
+        this.setVisible(false);
+        Globals.MainFormLogin.setVisible(true);
+    }//GEN-LAST:event_formWindowClosed
 
     /**
      * @param args the command line arguments
